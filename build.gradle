@@ -16,6 +16,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'maven'
 apply plugin: 'org.springframework.boot'
+apply plugin: 'jacoco'
 
 group = 'io.swagger'
 project.version = '1.0.0-SNAPSHOT'
@@ -67,6 +68,8 @@ dependencies {
 }
 
 
+// when building on CI Circle, we want to download the deps and then cache them for use next time
+// the following code creates tasks that will just download the deps.
 configurations.findAll().each { config ->
 	task "downloadDependencies${config.name}"(type: Exec, group: 'build', description: "download deps for ${config.name}") {
 		//    println "${config}:"
@@ -85,3 +88,15 @@ downloadDependencies.dependsOn {
 		task.name.startsWith('downloadDependencies') && task.name != "downloadDependencies"
 	}
 }
+
+jacoco { toolVersion = "0.7.7.201606060606" }
+
+jacocoTestReport {
+	reports {
+		xml.enabled true
+		csv.enabled false
+		html.enabled true
+	}
+}
+
+test.finalizedBy jacocoTestReport

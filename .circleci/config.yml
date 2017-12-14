@@ -31,6 +31,7 @@ jobs:
       - run: ./gradlew --no-daemon build
       - store_artifacts:
           path: build/libs/*.jar
+          path: build/reports/**/*
 
  
     
