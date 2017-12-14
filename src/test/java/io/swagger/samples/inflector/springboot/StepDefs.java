@@ -4,6 +4,7 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Link;
@@ -12,9 +13,11 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.swagger.samples.inflector.springboot.client.SampleServiceClient;
@@ -28,6 +31,9 @@ public class StepDefs {
 	@Autowired
 	private SampleServiceClient client;
 
+	@Autowired
+	private JdbcTemplate jdbcTemplate;
+
 	private Resource resource;
 
 	@When("^I request the root API$")
@@ -40,6 +46,12 @@ public class StepDefs {
 		List<Link> links = resource.getLinks();
 		List<String> linkTitles = links.stream().map(link -> link.getTitle()).collect(Collectors.toList());
 		assertThat(linkTitles, contains(titles.toArray()));
+	}
+
+	@Given("^The User table has the following entry$")
+	public void theUserTableHasTheFollowingEntry(Map<String, String> e) throws Throwable {
+		String query = "insert into UserDetails values( '" + e.get("Name") + "','" + e.get("DoB") + "')";
+		jdbcTemplate.update(query);
 	}
 
 }
