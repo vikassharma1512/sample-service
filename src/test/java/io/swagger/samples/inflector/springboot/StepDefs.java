@@ -11,6 +11,7 @@ import javax.ws.rs.core.Link;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -20,8 +21,8 @@ import io.swagger.samples.inflector.springboot.client.SampleServiceClient;
 import io.swagger.samples.inflector.springboot.models.Resource;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = { InflectorApplication.class })
-@SpringBootTest
+@ContextConfiguration(classes = { InflectorApplication.class, TestConfiguration.class })
+@SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 public class StepDefs {
 
 	@Autowired

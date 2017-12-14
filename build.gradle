@@ -89,22 +89,62 @@ downloadDependencies.dependsOn {
 	}
 }
 
-test {
-	exclude '**/StepDefs.class'
 
-	// show standard out and standard error of the test JVM(s) on the console
-	testLogging.showStandardStreams = true
-
-	// listen to events in the test execution lifecycle
-	beforeTest { descriptor ->
-		logger.lifecycle("Running test: " + descriptor)
-	}
-
-//	// listen to standard out and standard error of the test JVM(s)
-//	onOutput { descriptor, event ->
-//		logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
-//	}
+def testClasses = fileTree("src/test/java") {
+	include '**/*Tests*.java'
+	exclude '**/*_Current.java'
 }
+
+testClasses.each { File testClass ->
+	def baseName = testClass.name.replace('.java', '')
+	task "test${baseName}"(type: Test, group: 'verification', description: "run ${baseName}") {
+		testClassesDir = sourceSets.test.output.classesDir
+		classpath = sourceSets.test.runtimeClasspath
+		include "**/${baseName}.class"
+		ext.outputDir = "${buildDir}/test-results/test${baseName}"
+		outputs.dir file(outputDir)
+		ext.coverageDir = "${buildDir}/jacoco"
+		outputs.dir file(coverageDir)
+		systemProperty 'cucumber.options',  "--plugin json:${outputDir}/cucumber.json --plugin html:${outputDir}/html --plugin junit:${outputDir}/TEST-cucumber.xml"
+		systemProperty 'jacoco.destinationFile', "${coverageDir}/${baseName}.exec"
+		jacoco {
+			append = false
+			destinationFile = file("${coverageDir}/jacoco/${baseName}.exec")
+		}
+
+
+		ignoreFailures = false
+	}
+}
+
+test {
+	exclude '**'
+	ignoreFailures = false
+}
+test.finalizedBy jacocoTestReport
+
+test.dependsOn {
+	tasks.findAll { task ->
+		task.name.startsWith('test') && task.name != "test" }
+}
+
+
+//test {
+//	exclude '**/StepDefs.class'
+//
+//	// show standard out and standard error of the test JVM(s) on the console
+//	testLogging.showStandardStreams = true
+//
+//	// listen to events in the test execution lifecycle
+//	beforeTest { descriptor ->
+//		logger.lifecycle("Running test: " + descriptor)
+//	}
+//
+////	// listen to standard out and standard error of the test JVM(s)
+////	onOutput { descriptor, event ->
+////		logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
+////	}
+//}
 
 jacoco { toolVersion = "0.7.7.201606060606" }
 
