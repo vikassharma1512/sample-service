@@ -1,0 +1,102 @@
+swagger: "2.0"
+info:
+  description: |
+    Sample Service
+  version: "1.0.0"
+  title: "Swagger Sample Service"
+basePath: /v2
+tags:
+  - name: user
+schemes:
+- "http"
+produces:
+  - "application/json"
+paths:
+  /:
+    get:
+      summary: API Root
+      operationId: getApiRoot
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: "#/definitions/Root"
+          headers:
+            Link:
+              description: rfc5988 Link
+              type: array
+              collectionFormat: csv
+              items:
+                type: string
+                pattern: "<(.*)>;(.*)"
+  /user:
+    get:
+      summary: User Details
+      operationId: getUserDetails
+      tags:
+        - user
+      responses:
+        200:
+          description: successful operation
+          schema:
+            $ref: "#/definitions/UserDetails"
+          headers:
+            Link:
+              description: rfc5988 Links
+              type: array
+              collectionFormat: csv
+              items:
+                type: string
+                pattern: "<(.*)>;(.*)"
+    put:
+      summary: Update user details
+      operationId: updateUserDetails
+      tags:
+        - user
+      consumes:
+        - application/x-www-form-urlencoded
+      parameters: 
+        - name: surname
+          in: formData
+          description: New preferredName for the user
+          type: string
+        - name: givenName
+          in: formData
+          description: New preferredName for the user
+          type: string
+        - name: preferredName
+          in: formData
+          description: New preferredName for the user
+          type: string
+        - name: dob
+          in: formData
+          description: New preferredName for the user
+          type: string
+          format : date
+      responses:
+        204:
+          description: successful operation
+          headers:
+            Location:
+              description: URL of the updated resource
+              type: string
+definitions:
+  Root:
+    type: object
+  UserDetails:
+    type: object
+    properties:
+      surname:
+        type: string
+      givenName:
+        type: string
+      preferredName:
+        type: string
+      dob:
+        type: string
+        format: date
+    example: 
+      surname: Doe
+      givenName: John
+      preferredName: John Doe, first of his name, fictitious in nature, king of the unknown, bane of detectives, master of mysteries.
+      dob: "1768-01-01"
