@@ -54,4 +54,9 @@ public class StepDefs {
 		jdbcTemplate.update(query);
 	}
 
+	@When("^I request the User Details API$")
+	public void iRequestTheUserDetailsAPI() throws Throwable {
+		resource = client.followLink(client.getRoot().getLinks().stream()
+				.filter(link -> link.getRels().contains("https://tomhoward.github.com/rels/user")).findAny().get());
+	}
 }

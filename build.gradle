@@ -58,7 +58,8 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-jersey')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-jdbc')
-
+	compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
+	
 	compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
 
 
@@ -111,7 +112,7 @@ testClasses.each { File testClass ->
 		systemProperty 'jacoco.destinationFile', "${coverageDir}/${baseName}.exec"
 		jacoco {
 			append = false
-			destinationFile = file("${coverageDir}/jacoco/${baseName}.exec")
+			destinationFile = file("${coverageDir}/${baseName}.exec")
 		}
 
 
@@ -151,6 +152,7 @@ test.dependsOn {
 jacoco { toolVersion = "0.7.7.201606060606" }
 
 jacocoTestReport {
+	executionData = fileTree(dir: "${buildDir}", include: 'jacoco/*.exec')
 	reports {
 		xml.enabled true
 		csv.enabled false
