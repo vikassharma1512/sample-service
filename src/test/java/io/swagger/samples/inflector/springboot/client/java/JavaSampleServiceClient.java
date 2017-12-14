@@ -9,7 +9,7 @@ import io.swagger.samples.inflector.springboot.models.Resource;
 import io.swagger.samples.inflector.springboot.models.RootResource;
 
 @Component
-@Profile("javaApi")
+@Profile(value = { "javaApi" })
 public class JavaSampleServiceClient implements SampleServiceClient {
 
 	@Autowired
