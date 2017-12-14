@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserResource implements Resource {
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+  @Autowired
+  private JdbcTemplate jdbcTemplate;
 
-	@Override
-	public List<Link> getLinks() {
-		throw new NotImplementedException("TODO");
-	}
+  @Override
+  public List<Link> getLinks() {
+    throw new NotImplementedException("TODO");
+  }
 
 }

@@ -11,12 +11,12 @@ import org.springframework.ws.client.core.WebServiceTemplate;
 
 @Component
 public class AccountsResource implements Resource {
-	@Autowired
-	private WebServiceTemplate wsTemplate;
+  @Autowired
+  private WebServiceTemplate wsTemplate;
 
-	@Override
-	public List<Link> getLinks() {
-		throw new NotImplementedException("TODO");
-	}
+  @Override
+  public List<Link> getLinks() {
+    throw new NotImplementedException("TODO");
+  }
 
 }

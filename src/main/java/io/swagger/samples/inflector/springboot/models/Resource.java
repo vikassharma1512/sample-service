@@ -6,6 +6,6 @@ import javax.ws.rs.core.Link;
 
 public interface Resource {
 
-	List<Link> getLinks();
+  List<Link> getLinks();
 
 }
