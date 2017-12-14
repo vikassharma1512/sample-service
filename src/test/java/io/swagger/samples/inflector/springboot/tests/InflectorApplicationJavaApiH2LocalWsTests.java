@@ -1,4 +1,4 @@
-package io.swagger.samples.inflector.springboot;
+package io.swagger.samples.inflector.springboot.tests;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import cucumber.api.CucumberOptions;
+import io.swagger.samples.inflector.springboot.SpringProfileCucumber;
 
 @RunWith(SpringProfileCucumber.class)
 @CucumberOptions(plugin = { "pretty",
