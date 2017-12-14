@@ -4,6 +4,7 @@ Feature: User Details
   As an API consumer
   I want the User Details API to provide me with my details
 
+	# NOTE: The system is designed for only a single user
   Scenario: Get User Details
     Given The User table has the following entry
       | Name      | DoB         |
