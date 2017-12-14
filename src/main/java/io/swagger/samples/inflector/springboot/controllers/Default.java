@@ -7,7 +7,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,6 +29,6 @@ public class Default {
 	}
 
 	public ResponseContext getUserDetails(RequestContext request) {
-		throw new NotImplementedException("TODO");
+		return new ResponseContext().status(Status.NOT_IMPLEMENTED);
 	}
 }

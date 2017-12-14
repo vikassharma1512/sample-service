@@ -29,10 +29,12 @@ public class RestSampleServiceClient implements SampleServiceClient {
 
 	@Override
 	public Resource followLink(Link link) {
-		throw new PendingException("TODO");
-		// ResponseEntity<JSONObject> response =
-		// restTemplate.getForEntity(link.getUri(), JSONObject.class);
-		// return new RestResource(response);
+		try {
+			ResponseEntity<JSONObject> response = restTemplate.getForEntity(link.getUri(), JSONObject.class);
+			return new RestResource(response);
+		} catch (Exception e) {
+			throw new PendingException("TODO: " + e.getMessage());
+		}
 	}
 
 }

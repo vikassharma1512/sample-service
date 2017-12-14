@@ -48,6 +48,16 @@ You can run them individually as JUnit tests in your IDE or you can run them all
 
 	./gradlew test
 
+### Java API Testing
+
+`InflectorApplicationJavaApiH2LocalWsTests.java` tests the application with direct Java method calls. This ensures that the
+functional logic is correctly implemented and is not coupled to the controllers, so that the same logic can be exposed
+via other mechanisms in the future.
+
+### REST API Testing
+
+`InflectorApplicationRestApiH2LocalWsTests.java` tests the application via REST calls. This ensures that the
+functional logic is correctly exposed via the REST API, without changing that behaviour
 
 
 

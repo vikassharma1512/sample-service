@@ -4,11 +4,11 @@ Feature: User Details
   As an API consumer
   I want the User Details API to provide me with my details
 
-	# NOTE: The system is designed for only a single user
+  # NOTE: The system is designed for only a single user
   Scenario: Get User Details
     Given The User table has the following entry
-      | Name      | DoB         |
-      | Doe, John | 01/Jan/1768 |
+      | Name | Doe, John   |
+      | DoB  | 01/Jan/1768 |
     When I request the User Details API
     Then I'll get the following user details
       | Surname | GivenName | DoB        |

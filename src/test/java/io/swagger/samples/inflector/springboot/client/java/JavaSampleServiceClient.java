@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import cucumber.api.PendingException;
 import io.swagger.samples.inflector.springboot.client.SampleServiceClient;
+import io.swagger.samples.inflector.springboot.models.AccountsResource;
 import io.swagger.samples.inflector.springboot.models.Resource;
 import io.swagger.samples.inflector.springboot.models.RootResource;
 import io.swagger.samples.inflector.springboot.models.UserResource;
@@ -22,6 +23,9 @@ public class JavaSampleServiceClient implements SampleServiceClient {
 	@Autowired
 	private UserResource userResource;
 
+	@Autowired
+	private AccountsResource accountsResource;
+
 	@Override
 	public Resource getRoot() {
 		return rootResource;
@@ -32,6 +36,8 @@ public class JavaSampleServiceClient implements SampleServiceClient {
 		switch (link.getUri().toString()) {
 		case "http://localhost:8080/api/v2/user":
 			return userResource;
+		case "http://localhost:8080/api/v2/accounts":
+			return accountsResource;
 		default:
 			throw new PendingException("TODO");
 		}
