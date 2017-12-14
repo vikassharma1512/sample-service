@@ -1,17 +1,13 @@
 buildscript {
-	ext {
-		springBootVersion = '1.4.2.RELEASE'
-	}
+	ext { springBootVersion = '1.4.2.RELEASE' }
 	repositories {
-        jcenter()
-        mavenCentral()
-        maven {
-            url "https://plugins.gradle.org/m2/"
-        }
+		jcenter()
+		mavenCentral()
+		maven { url "https://plugins.gradle.org/m2/" }
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-        classpath('gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.4.17')
+		classpath('gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.4.17')
 	}
 }
 
@@ -28,48 +24,64 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-    mavenLocal()
-    jcenter()
+	mavenLocal()
+	jcenter()
 	mavenCentral()
 }
 
-springBoot  {
-    buildInfo()
-}
+springBoot  { buildInfo() }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-    classifier = 'sources'
-    from sourceSets.main.allSource
+	classifier = 'sources'
+	from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
+	classifier = 'javadoc'
+	from javadoc.destinationDir
 }
 
 artifacts {
-    archives sourcesJar
-    archives javadocJar
+	archives sourcesJar
+	archives javadocJar
 }
 
 dependencies {
 	compile('io.swagger:swagger-inflector:1.0.10')
-    compile('com.github.javafaker:javafaker:0.11') {
-        exclude group: 'com.github.bmoliveira'
-    }
-    compile('com.fasterxml.jackson.core:jackson-annotations')
-    compile('com.fasterxml.jackson.core:jackson-databind')
-    compile('com.fasterxml.jackson.datatype:jackson-datatype-jdk8')
-    compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
+	compile('com.github.javafaker:javafaker:0.11') { exclude group: 'com.github.bmoliveira' }
+	compile('com.fasterxml.jackson.core:jackson-annotations')
+	compile('com.fasterxml.jackson.core:jackson-databind')
+	compile('com.fasterxml.jackson.datatype:jackson-datatype-jdk8')
+	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-jersey')
-    compile('org.springframework.boot:spring-boot-starter-web')
+	compile('org.springframework.boot:spring-boot-starter-web')
 
 	compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
-	
-	
+
+
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile group: 'info.cukes', name: 'cucumber-junit', version:'1.2.5'
 	testCompile group: 'info.cukes', name: 'cucumber-spring', version:'1.2.5'
 	testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
+}
+
+
+configurations.findAll().each { config ->
+	task "downloadDependencies${config.name}"(type: Exec, group: 'build', description: "download deps for ${config.name}") {
+		//    println "${config}:"
+		//    config.allArtifacts.getFiles().each { file -> println " " + file}
+		//    config.files().each { file -> println " " + file}
+		//    println ' '
+		config.files
+		commandLine 'echo', "Downloaded all dependencies for ${config.name}"
+	}
+}
+
+task "downloadDependencies"(type: Exec, group: 'build', description: "download all deps") { commandLine 'echo', "Downloaded all dependencies" }
+
+downloadDependencies.dependsOn {
+	tasks.findAll { task ->
+		task.name.startsWith('downloadDependencies') && task.name != "downloadDependencies"
+	}
 }
