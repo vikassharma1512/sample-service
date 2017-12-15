@@ -1,14 +1,14 @@
 buildscript {
-	ext { springBootVersion = '1.4.2.RELEASE' }
-	repositories {
-		jcenter()
-		mavenCentral()
-		maven { url "https://plugins.gradle.org/m2/" }
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-		classpath('gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.4.17')
-	}
+  ext { springBootVersion = '1.4.2.RELEASE' }
+  repositories {
+    jcenter()
+    mavenCentral()
+    maven { url "https://plugins.gradle.org/m2/" }
+  }
+  dependencies {
+    classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    classpath('gradle.plugin.com.gorylenko.gradle-git-properties:gradle-git-properties:1.4.17')
+  }
 }
 
 apply plugin: 'java'
@@ -25,140 +25,149 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 repositories {
-	mavenLocal()
-	jcenter()
-	mavenCentral()
+  mavenLocal()
+  jcenter()
+  mavenCentral()
 }
+
+configurations { codacy }
+
 
 springBoot  { buildInfo() }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
-	classifier = 'sources'
-	from sourceSets.main.allSource
+  classifier = 'sources'
+  from sourceSets.main.allSource
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
-	classifier = 'javadoc'
-	from javadoc.destinationDir
+  classifier = 'javadoc'
+  from javadoc.destinationDir
 }
 
 artifacts {
-	archives sourcesJar
-	archives javadocJar
+  archives sourcesJar
+  archives javadocJar
 }
 
 dependencies {
-	compile('io.swagger:swagger-inflector:1.0.10')
-	compile('com.github.javafaker:javafaker:0.11') { exclude group: 'com.github.bmoliveira' }
-	compile('com.fasterxml.jackson.core:jackson-annotations')
-	compile('com.fasterxml.jackson.core:jackson-databind')
-	compile('com.fasterxml.jackson.datatype:jackson-datatype-jdk8')
-	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
-	compile('org.springframework.boot:spring-boot-starter-actuator')
-	compile('org.springframework.boot:spring-boot-starter-jersey')
-	compile('org.springframework.boot:spring-boot-starter-web')
-	compile('org.springframework.boot:spring-boot-starter-jdbc')
-	compile ('org.springframework.ws:spring-ws-core')
-	compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
-	
-	compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+  compile('io.swagger:swagger-inflector:1.0.10')
+  compile('com.github.javafaker:javafaker:0.11') { exclude group: 'com.github.bmoliveira' }
+  compile('com.fasterxml.jackson.core:jackson-annotations')
+  compile('com.fasterxml.jackson.core:jackson-databind')
+  compile('com.fasterxml.jackson.datatype:jackson-datatype-jdk8')
+  compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
+  compile('org.springframework.boot:spring-boot-starter-actuator')
+  compile('org.springframework.boot:spring-boot-starter-jersey')
+  compile('org.springframework.boot:spring-boot-starter-web')
+  compile('org.springframework.boot:spring-boot-starter-jdbc')
+  compile ('org.springframework.ws:spring-ws-core')
+  compile group: 'com.jayway.jsonpath', name: 'json-path', version: '2.4.0'
 
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile group: 'info.cukes', name: 'cucumber-junit', version:'1.2.5'
-	testCompile group: 'info.cukes', name: 'cucumber-spring', version:'1.2.5'
-	testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
-	testCompile('com.h2database:h2')
-	
+  compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+
+  testCompile('org.springframework.boot:spring-boot-starter-test')
+  testCompile group: 'info.cukes', name: 'cucumber-junit', version:'1.2.5'
+  testCompile group: 'info.cukes', name: 'cucumber-spring', version:'1.2.5'
+  testCompile 'org.hamcrest:hamcrest-junit:2.0.0.0'
+  testCompile('com.h2database:h2')
+
+
+  codacy group: 'com.codacy', name: 'codacy-coverage-reporter', version: '2.0.1'
+  codacy group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+  codacy group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+  
 }
 
 
 // when building on CI Circle, we want to download the deps and then cache them for use next time
 // the following code creates tasks that will just download the deps.
 configurations.findAll().each { config ->
-	task "downloadDependencies${config.name}"(type: Exec, group: 'build', description: "download deps for ${config.name}") {
-		//    println "${config}:"
-		//    config.allArtifacts.getFiles().each { file -> println " " + file}
-		//    config.files().each { file -> println " " + file}
-		//    println ' '
-		config.files
-		commandLine 'echo', "Downloaded all dependencies for ${config.name}"
-	}
+  task "downloadDependencies${config.name}"(type: Exec, group: 'build', description: "download deps for ${config.name}") {
+    //    println "${config}:"
+    //    config.allArtifacts.getFiles().each { file -> println " " + file}
+    //    config.files().each { file -> println " " + file}
+    //    println ' '
+    config.files
+    commandLine 'echo', "Downloaded all dependencies for ${config.name}"
+  }
 }
 
 task "downloadDependencies"(type: Exec, group: 'build', description: "download all deps") { commandLine 'echo', "Downloaded all dependencies" }
 
 downloadDependencies.dependsOn {
-	tasks.findAll { task ->
-		task.name.startsWith('downloadDependencies') && task.name != "downloadDependencies"
-	}
+  tasks.findAll { task ->
+    task.name.startsWith('downloadDependencies') && task.name != "downloadDependencies"
+  }
 }
 
 
 def testClasses = fileTree("src/test/java") {
-	include '**/*Tests*.java'
-	exclude '**/*_Current.java'
+  include '**/*Tests*.java'
+  exclude '**/*_Current.java'
 }
 
 testClasses.each { File testClass ->
-	def baseName = testClass.name.replace('.java', '')
-	task "test${baseName}"(type: Test, group: 'verification', description: "run ${baseName}") {
-		testClassesDir = sourceSets.test.output.classesDir
-		classpath = sourceSets.test.runtimeClasspath
-		include "**/${baseName}.class"
-		ext.outputDir = "${buildDir}/test-results/test${baseName}"
-		outputs.dir file(outputDir)
-		ext.coverageDir = "${buildDir}/jacoco"
-		outputs.dir file(coverageDir)
-		systemProperty 'cucumber.options',  "--plugin json:${outputDir}/cucumber.json --plugin html:${outputDir}/html --plugin junit:${outputDir}/TEST-cucumber.xml"
-		systemProperty 'jacoco.destinationFile', "${coverageDir}/${baseName}.exec"
-		jacoco {
-			append = false
-			destinationFile = file("${coverageDir}/${baseName}.exec")
-		}
+  def baseName = testClass.name.replace('.java', '')
+  task "test${baseName}"(type: Test, group: 'verification', description: "run ${baseName}") {
+    testClassesDir = sourceSets.test.output.classesDir
+    classpath = sourceSets.test.runtimeClasspath
+    include "**/${baseName}.class"
+    ext.outputDir = "${buildDir}/test-results/test${baseName}"
+    outputs.dir file(outputDir)
+    ext.coverageDir = "${buildDir}/jacoco"
+    outputs.dir file(coverageDir)
+    systemProperty 'cucumber.options',  "--plugin json:${outputDir}/cucumber.json --plugin html:${outputDir}/html --plugin junit:${outputDir}/TEST-cucumber.xml"
+    systemProperty 'jacoco.destinationFile', "${coverageDir}/${baseName}.exec"
+    jacoco {
+      append = false
+      destinationFile = file("${coverageDir}/${baseName}.exec")
+    }
 
 
-		ignoreFailures = false
-	}
+    ignoreFailures = false
+  }
 }
 
 test {
-	exclude '**'
-	ignoreFailures = false
+  exclude '**'
+  testLogging.showStandardStreams = true
+
+  ignoreFailures = false
 }
 test.finalizedBy jacocoTestReport
 
 test.dependsOn {
-	tasks.findAll { task ->
-		task.name.startsWith('test') && task.name != "test" }
+  tasks.findAll { task ->
+    task.name.startsWith('test') && task.name != "test" }
 }
 
 
-//test {
-//	exclude '**/StepDefs.class'
-//
-//	// show standard out and standard error of the test JVM(s) on the console
-//	testLogging.showStandardStreams = true
-//
-//	// listen to events in the test execution lifecycle
-//	beforeTest { descriptor ->
-//		logger.lifecycle("Running test: " + descriptor)
-//	}
-//
-////	// listen to standard out and standard error of the test JVM(s)
-////	onOutput { descriptor, event ->
-////		logger.lifecycle("Test: " + descriptor + " produced standard out/err: " + event.message )
-////	}
-//}
 
 jacoco { toolVersion = "0.7.7.201606060606" }
 
 jacocoTestReport {
-	executionData = fileTree(dir: "${buildDir}", include: 'jacoco/*.exec')
-	reports {
-		xml.enabled true
-		csv.enabled false
-		html.enabled true
-	}
+  executionData = fileTree(dir: "${buildDir}", include: 'jacoco/*.exec')
+  reports {
+    xml.enabled true
+    csv.enabled false
+    html.enabled true
+  }
 }
 
 test.finalizedBy jacocoTestReport
+
+
+task uploadCoverageToCodacy(type: JavaExec, dependsOn : jacocoTestReport, group:"verification") {
+  main = "com.codacy.CodacyCoverageReporter"
+  def token = project.getProperties().get("CODACY_PROJECT_TOKEN") ?: "NOT SET"
+  classpath = configurations.codacy
+  args = [
+    "-l",
+    "Java",
+    "-r",
+    "${buildDir}/reports/jacoco/test/jacocoTestReport.xml",
+    "--projectToken",
+    "${token}"
+  ]
+}
