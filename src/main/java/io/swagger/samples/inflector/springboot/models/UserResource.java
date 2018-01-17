@@ -1,5 +1,6 @@
 package io.swagger.samples.inflector.springboot.models;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.ws.rs.core.Link;
@@ -16,6 +17,10 @@ public class UserResource implements Resource {
 
   @Override
   public List<Link> getLinks() {
+    return Collections.emptyList();
+  }
+
+  public String getSurname() {
     throw new NotImplementedException("TODO");
   }
 

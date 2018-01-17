@@ -5,6 +5,7 @@ Feature: User Details
   I want the User Details API to provide me with my details
 
   # NOTE: The system is designed for only a single user
+  @wip
   Scenario: Get User Details
     Given The User table has the following entry
       | Name | Doe, John   |

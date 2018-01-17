@@ -5,10 +5,12 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.ws.rs.core.Link;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,80 +26,97 @@ import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import io.swagger.samples.inflector.springboot.client.SampleServiceClient;
 import io.swagger.samples.inflector.springboot.models.Resource;
+import io.swagger.samples.inflector.springboot.models.UserResource;
 
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = { InflectorApplication.class, TestConfiguration.class })
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 public class StepDefs {
 
-	@Autowired
-	private SampleServiceClient client;
+  @Autowired
+  private SampleServiceClient client;
 
-	@Autowired
-	private JdbcTemplate jdbcTemplate;
+  @Autowired
+  private JdbcTemplate jdbcTemplate;
 
-	@Autowired
-	private StubAccounts stubAccounts;
+  @Autowired
+  private StubAccounts stubAccounts;
 
-	private Resource resource;
+  private Resource resource;
 
-	@When("^I request the root API$")
-	public void i_request_the_root_API() throws Throwable {
-		resource = client.getRoot();
-	}
+  @When("^I request the root API$")
+  public void i_request_the_root_API() throws Throwable {
+    resource = client.getRoot();
+  }
 
-	@Then("^I'll get links to the following endpoints$")
-	public void illGetLinksToTheFollowingEndpoints(List<String> titles) throws Throwable {
-		List<Link> links = resource.getLinks();
-		List<String> linkTitles = links.stream().map(link -> link.getTitle()).collect(Collectors.toList());
-		assertThat(linkTitles, contains(titles.toArray()));
-	}
+  @Then("^I'll get links to the following endpoints$")
+  public void illGetLinksToTheFollowingEndpoints(List<String> titles) throws Throwable {
+    List<Link> links = resource.getLinks();
+    List<String> linkTitles = links.stream().map(link -> link.getTitle())
+        .collect(Collectors.toList());
+    assertThat(linkTitles, contains(titles.toArray()));
+  }
 
-	@Given("^The User table has the following entry$")
-	public void theUserTableHasTheFollowingEntry(Map<String, String> e) throws Throwable {
-		String query = "insert into UserDetails values( '" + e.get("Name") + "','" + e.get("DoB") + "')";
-		jdbcTemplate.update(query);
-	}
+  @Given("^The User table has the following entry$")
+  public void theUserTableHasTheFollowingEntry(Map<String, String> e) throws Throwable {
+    String query = "insert into UserDetails values( '" + e.get("Name") + "','" + e.get("DoB")
+        + "')";
+    jdbcTemplate.update(query);
+  }
 
-	@When("^I request the User Details API$")
-	public void iRequestTheUserDetailsAPI() throws Throwable {
-		resource = client.followLink(client.getRoot().getLinks().stream()
-				.filter(link -> link.getRels().contains("https://tomhoward.github.com/rels/user")).findAny().get());
-	}
+  @When("^I request the User Details API$")
+  public void iRequestTheUserDetailsAPI() throws Throwable {
+    resource = client.followLink(client.getRoot().getLinks().stream()
+        .filter(link -> link.getRels().contains("https://tomhoward.github.com/rels/user")).findAny()
+        .get());
+  }
 
-	@Given("^The user has the following accounts$")
-	public void theUserHasTheFollowingAccounts(List<Map<String, String>> accounts) throws Throwable {
-		stubAccounts.setAccounts(accounts);
-	}
+  @Given("^The user has the following accounts$")
+  public void theUserHasTheFollowingAccounts(List<Map<String, String>> accounts) throws Throwable {
+    stubAccounts.setAccounts(accounts);
+  }
 
-	@When("^I request the Account API$")
-	public void iRequestTheAccountAPI() throws Throwable {
-		resource = client.followLink(client.getRoot().getLinks().stream()
-				.filter(link -> link.getRels().contains("https://tomhoward.github.com/rels/accounts")).findAny().get());
-	}
+  @When("^I request the Account API$")
+  public void iRequestTheAccountAPI() throws Throwable {
+    resource = client.followLink(client.getRoot().getLinks().stream()
+        .filter(link -> link.getRels().contains("https://tomhoward.github.com/rels/accounts"))
+        .findAny().get());
+  }
 
-	@Then("^I'll get the following account details$")
-	public void iLlGetTheFollowingAccountDetails(DataTable arg1) throws Throwable {
-		// Write code here that turns the phrase above into concrete actions
-		// For automatic transformation, change DataTable to one of
-		// List<YourType>, List<List<E>>, List<Map<K,V>> or Map<K,V>.
-		// E,K,V must be a scalar (String, Integer, Date, enum etc)
-		throw new PendingException();
-	}
+  @Then("^I'll get the following account details$")
+  public void iLlGetTheFollowingAccountDetails(DataTable arg1) throws Throwable {
+    // Write code here that turns the phrase above into concrete actions
+    // For automatic transformation, change DataTable to one of
+    // List<YourType>, List<List<E>>, List<Map<K,V>> or Map<K,V>.
+    // E,K,V must be a scalar (String, Integer, Date, enum etc)
+    throw new PendingException();
+  }
 
-	@Then("^I'll get the following user details$")
-	public void iLlGetTheFollowingUserDetails(DataTable arg1) throws Throwable {
-		// Write code here that turns the phrase above into concrete actions
-		// For automatic transformation, change DataTable to one of
-		// List<YourType>, List<List<E>>, List<Map<K,V>> or Map<K,V>.
-		// E,K,V must be a scalar (String, Integer, Date, enum etc)
-		throw new PendingException();
-	}
+  @Then("^I'll get the following user details$")
+  public void iLlGetTheFollowingUserDetails(Map<String, String> expectedUserDetails)
+      throws Throwable {
+    try {
+      UserResource ur = (UserResource) resource;
 
-	@When("^set the preferred name to \"([^\"]*)\"$")
-	public void setThePreferredNameTo(String arg1) throws Throwable {
-		// Write code here that turns the phrase above into concrete actions
-		throw new PendingException();
-	}
+      for (Entry<String, String> entry : expectedUserDetails.entrySet()) {
+        switch (entry.getKey()) {
+        case "Surname":
+          assertThat(ur.getSurname(), equalTo(entry.getValue()));
+          break;
+        default:
+          throw new PendingException("TODO: user details - " + entry.getKey());
+        }
+      }
+    } catch (NotImplementedException e) {
+      e.printStackTrace();
+      throw new PendingException(e.getMessage());
+    }
+  }
+
+  @When("^set the preferred name to \"([^\"]*)\"$")
+  public void setThePreferredNameTo(String arg1) throws Throwable {
+    // Write code here that turns the phrase above into concrete actions
+    throw new PendingException();
+  }
 
 }

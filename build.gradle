@@ -104,7 +104,7 @@ downloadDependencies.dependsOn {
 
 def testClasses = fileTree("src/test/java") {
   include '**/*Tests*.java'
-  exclude '**/*_Current.java'
+  exclude '**/*Wip.java'
 }
 
 testClasses.each { File testClass ->

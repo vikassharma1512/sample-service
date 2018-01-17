@@ -18,17 +18,18 @@ import net.minidev.json.JSONObject;
 @Component
 public class Default {
 
-	@Autowired
-	RootResource root;
+  @Autowired
+  RootResource root;
 
-	public ResponseContext getApiRoot(RequestContext requestContext) {
-		ResponseContext rval = new ResponseContext().status(Status.OK).entity(new JSONObject());
-		MultivaluedMap<String, String> headers = rval.getHeaders();
-		headers.add(HttpHeaders.LINK, root.getLinks().stream().map(Object::toString).collect(Collectors.joining(",")));
-		return rval;
-	}
+  public ResponseContext getApiRoot(RequestContext requestContext) {
+    ResponseContext rval = new ResponseContext().status(Status.OK).entity(new JSONObject());
+    MultivaluedMap<String, String> headers = rval.getHeaders();
+    headers.add(HttpHeaders.LINK,
+        root.getLinks().stream().map(Object::toString).collect(Collectors.joining(",")));
+    return rval;
+  }
 
-	public ResponseContext getUserDetails(RequestContext request) {
-		return new ResponseContext().status(Status.NOT_IMPLEMENTED);
-	}
+  public ResponseContext getUserDetails(RequestContext request) {
+    return new ResponseContext().status(Status.NOT_IMPLEMENTED);
+  }
 }
